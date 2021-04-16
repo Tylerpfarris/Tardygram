@@ -109,13 +109,13 @@ describe('Tardygram routes', () => {
     const response = await request(app)
       .post('/api/v1/comments')
       .send({
-        post: 1,
+        postId: 1,
         comment: 'WHAT A GREAT POST'
       });
 
     expect(response.body).toEqual({
       id: 1,
-      post: 1,
+      postId: 1,
       comment: 'WHAT A GREAT POST',
       userName: 'devon_wolf'
     });

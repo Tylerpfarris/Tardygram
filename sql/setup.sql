@@ -18,7 +18,7 @@ CREATE TABLE posts (
 
 CREATE TABLE comments (
     id SERIAL PRIMARY KEY NOT NULL,
-    comment_by TEXT NOT NULL REFERENCES users(github_user_name),
-    post INTEGER NOT NULL REFERENCES posts(id),
-    comment TEXT NOT NULL
+    post_id INTEGER NOT NULL REFERENCES posts(id),
+    comment TEXT NOT NULL,
+    comment_by TEXT NOT NULL REFERENCES users(github_user_name)
 )
