@@ -114,6 +114,13 @@ describe('Tardygram routes', () => {
     })
   })
 
+  it('gets the 10 most popular posts', async () => {
+    const response = await request(app)
+      .get('/api/v1/posts/popular');
+
+    expect(response.body).toEqual(expect.any(Array));
+  })
+
   it('posts a comment', async () => {
     const response = await request(app)
       .post('/api/v1/comments')
