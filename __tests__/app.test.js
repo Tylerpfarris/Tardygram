@@ -81,7 +81,6 @@ describe('Tardygram routes', () => {
     const response = await request(app)
       .put('/api/v1/posts/1')
       .send({
-        userName: 'devon_wolf',
         photoUrl: 'some.image.url',
         caption: 'look at this amazing image',
         tags: ['image', 'great', 'image', 'hashtag CRUD', 'I like tarts', 'Air Bud is LYF']});
@@ -104,5 +103,21 @@ describe('Tardygram routes', () => {
       caption: 'look at this amazing image',
       tags: ['image', 'great', 'image', 'hashtag CRUD']
     })
+  })
+
+  it('posts a comment', async () => {
+    const response = await request(app)
+      .post('/api/v1/comments')
+      .send({
+        post: 1,
+        comment: 'WHAT A GREAT POST'
+      });
+
+    expect(response.body).toEqual({
+      id: 1,
+      post: 1,
+      comment: 'WHAT A GREAT POST',
+      userName: 'devon_wolf'
+    });
   })
 });
