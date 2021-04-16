@@ -4,6 +4,7 @@ const request = require('supertest');
 const app = require('../lib/app');
 const User = require('../lib/models/User');
 const Post = require('../lib/models/Post');
+const Comment = require('../lib/models/Comment')
 
 jest.mock('../lib/middleware/ensureAuth.js', () => (req, res, next) => {
   req.user = {
@@ -31,8 +32,16 @@ describe('Tardygram routes', () => {
       photoUrl: 'some.image.url',
       caption: 'look at this amazing image',
       tags: ['image', 'great', 'image', 'hashtag CRUD']
-    })
+    });
   });
+
+  beforeEach(async () => {
+    await Comment.insert({
+      postId: 1,
+      comment: 'I DO NOT LIKE THIS',
+      userName: 'devon_wolf'
+    });
+  })
 
   it('adds a new post', async () => {
     const response = await request(app)
@@ -114,9 +123,21 @@ describe('Tardygram routes', () => {
       });
 
     expect(response.body).toEqual({
-      id: 1,
+      id: 2,
       postId: 1,
       comment: 'WHAT A GREAT POST',
+      userName: 'devon_wolf'
+    });
+  })
+
+  it('deletes a comment by its ID', async () => {
+    const response = await request(app)
+      .delete('/api/v1/comments/1');
+
+    expect(response.body).toEqual({
+      id: 1,
+      postId: 1,
+      comment: 'I DO NOT LIKE THIS',
       userName: 'devon_wolf'
     });
   })
