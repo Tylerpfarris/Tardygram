@@ -10,7 +10,9 @@ CREATE TABLE users (
 
 CREATE TABLE posts (
     id SERIAL PRIMARY KEY NOT NULL,
-    post_by TEXT NOT NULL REFERENCES users(github_user_name),
+    post_by TEXT NOT NULL
+        REFERENCES users(github_user_name)
+        ON DELETE CASCADE,
     photo_url TEXT NOT NULL,
     caption TEXT,
     tags TEXT[]
@@ -18,7 +20,12 @@ CREATE TABLE posts (
 
 CREATE TABLE comments (
     id SERIAL PRIMARY KEY NOT NULL,
-    comment_by TEXT NOT NULL REFERENCES users(github_user_name),
-    post INTEGER NOT NULL REFERENCES posts(id),
-    comment TEXT NOT NULL
-)
+    post_id INTEGER NOT NULL
+        REFERENCES posts(id)
+        ON DELETE CASCADE,
+    comment TEXT NOT NULL,
+    comment_by TEXT NOT NULL
+        REFERENCES users(github_user_name)
+        ON DELETE CASCADE
+        
+);

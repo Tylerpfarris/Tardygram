@@ -4,6 +4,7 @@ const request = require('supertest');
 const app = require('../lib/app');
 const User = require('../lib/models/User');
 const Post = require('../lib/models/Post');
+const Comment = require('../lib/models/Comment')
 
 jest.mock('../lib/middleware/ensureAuth.js', () => (req, res, next) => {
   req.user = {
@@ -31,8 +32,16 @@ describe('Tardygram routes', () => {
       photoUrl: 'some.image.url',
       caption: 'look at this amazing image',
       tags: ['image', 'great', 'image', 'hashtag CRUD']
-    })
+    });
   });
+
+  beforeEach(async () => {
+    await Comment.insert({
+      postId: 1,
+      comment: 'I DO NOT LIKE THIS',
+      userName: 'devon_wolf'
+    });
+  })
 
   it('adds a new post', async () => {
     const response = await request(app)
@@ -79,18 +88,16 @@ describe('Tardygram routes', () => {
 
   it('updates a post by id', async () => {
     const response = await request(app)
-      .put('/api/v1/posts/1')
+      .patch('/api/v1/posts/1')
       .send({
-        userName: 'devon_wolf',
-        photoUrl: 'some.image.url',
-        caption: 'look at this amazing image',
-        tags: ['image', 'great', 'image', 'hashtag CRUD', 'I like tarts', 'Air Bud is LYF']});
+        caption: 'actually this is a fart',
+        });
     expect(response.body).toEqual({
       id: 1,
       userName: 'devon_wolf',
       photoUrl: 'some.image.url',
-      caption: 'look at this amazing image',
-      tags: ['image', 'great', 'image', 'hashtag CRUD', 'I like tarts', 'Air Bud is LYF']
+      caption: 'actually this is a fart',
+      tags: ['image', 'great', 'image', 'hashtag CRUD']
     })
   })
 
@@ -104,5 +111,40 @@ describe('Tardygram routes', () => {
       caption: 'look at this amazing image',
       tags: ['image', 'great', 'image', 'hashtag CRUD']
     })
+  })
+
+  it('gets the 10 most popular posts', async () => {
+    const response = await request(app)
+      .get('/api/v1/posts/popular');
+
+    expect(response.body).toEqual(expect.any(Array));
+  })
+
+  it('posts a comment', async () => {
+    const response = await request(app)
+      .post('/api/v1/comments')
+      .send({
+        postId: 1,
+        comment: 'WHAT A GREAT POST'
+      });
+
+    expect(response.body).toEqual({
+      id: 2,
+      postId: 1,
+      comment: 'WHAT A GREAT POST',
+      userName: 'devon_wolf'
+    });
+  })
+
+  it('deletes a comment by its ID', async () => {
+    const response = await request(app)
+      .delete('/api/v1/comments/1');
+
+    expect(response.body).toEqual({
+      id: 1,
+      postId: 1,
+      comment: 'I DO NOT LIKE THIS',
+      userName: 'devon_wolf'
+    });
   })
 });
