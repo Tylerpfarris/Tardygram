@@ -5,7 +5,7 @@ const app = require('../lib/app');
 const User = require('../lib/models/User');
 const Post = require('../lib/models/Post');
 const Comment = require('../lib/models/Comment');
-const {makeNUsers, makeNPosts} = require('../lib/utils/dataGen');
+const {makeNUsers, makeNPosts, makeNComments, completePackage} = require('../lib/utils/dataGen');
 jest.mock('../lib/middleware/ensureAuth.js', () => (req, res, next) => {
   req.user = {
     userName: 'devon_wolf',
@@ -62,7 +62,6 @@ describe('Tardygram routes', () => {
   });
 
   it('gets all posts from a user', async () => {
-    await makeNPosts('devon_wolf', 8)
     const response = await request(app)
       .get('/api/v1/posts')
     console.log(response.body)
@@ -152,10 +151,11 @@ describe('Tardygram routes', () => {
   })
 
   it('gets the top 10 users with the most comments', async () => {
-    await makeNUsers(11)
+    await completePackage(11);
+
     const response = await request(app)
       .get('/api/v1/users/popular')
-    console.log(response.body, 'TEST')
-    expect(response.body).toEqual(expect.any(Array))
+console.log(response.body)
+    expect(response.body).toEqual(expect.any(Array));
   })
 });
