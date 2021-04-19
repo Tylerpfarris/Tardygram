@@ -147,4 +147,11 @@ describe('Tardygram routes', () => {
       userName: 'devon_wolf'
     });
   })
+
+  it('gets the top 10 users with the most comments', async () => {
+ 
+    const response = await request(app)
+    .get('/api/v1/users/popular')
+    expect(response.body).toEqual(expect.any(Array))
+  })
 });
